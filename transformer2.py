@@ -15,7 +15,7 @@ class Transformer(nn.Module):
         self.dropout = nn.Dropout(dropout)
 
     def generate_mask(self, tgt):
-        tgt_mask = (tgt != 0).unsqueeze(1).unsqueeze(3)
+        tgt_mask = (tgt != -1).unsqueeze(1).unsqueeze(3) # sentencepiece default pad_id = -1
         seq_length = tgt.size(1)
         nopeak_mask = (1 - torch.triu(torch.ones(1, seq_length, seq_length), diagonal=1)).bool()
         tgt_mask = tgt_mask & nopeak_mask
