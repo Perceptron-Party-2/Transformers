@@ -10,12 +10,12 @@ class TinyStoriesData(torch.utils.data.Dataset):
   def __init__(self, name, mode, max_seq_length):
     self.dataset = load_dataset(name)
     self.sp = spm.SentencePieceProcessor(model_file='tinystorycustom.model')
+    self.mode = mode
     self.create_data(max_seq_length)
 
   def create_data(self, max_seq_length):
-    for record in self.dataset: 
-      encoded = sp.encode(record[mode]['text'], add_bos=True, add_eos=True)
-      padded = encoded + [3] * (max_seq_length - len(encoded))
+    encoded = self.sp.encode(self.dataset[self.mode]['text'], add_bos=True, add_eos=True)
+    padded = encoded + [3] * (max_seq_length - len(encoded))
     self.data.append(padded)
 
   def __len__(self):
