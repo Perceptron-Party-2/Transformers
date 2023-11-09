@@ -5,7 +5,7 @@ import constants
 dataset = load_dataset("roneneldan/TinyStories")
 
 model_prefix = "tinystorycustom"
-vocab_size = 16000 
+vocab_size = constants.VOCAB_SIZE
 
 text_file = 'tinystories'
 
