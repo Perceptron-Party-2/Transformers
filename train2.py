@@ -63,6 +63,7 @@ class TinyStoriesData(torch.utils.data.Dataset):
 
 is_cuda = torch.cuda.is_available()
 device = "cuda:0" if is_cuda else "cpu"
+print(f"Device = {device}")
 
 ds = TinyStoriesData("roneneldan/TinyStories", "train[:1%]", constants.MAX_SEQ_LENGTH)
 
@@ -73,7 +74,7 @@ dl = torch.utils.data.DataLoader(ds, batch_size=constants.BATCH_SIZE, shuffle=Tr
 # Generate random sample data
 # tgt_data = torch.randint(1, tgt_vocab_size, (64, max_seq_length))  # (batch_size, seq_length)
 
-transformer = Transformer(constants.VOCAB_SIZE, constants.DIMENSIONS, constants.NUM_HEADS, constants.NUM_LAYERS, constants.D_FF, constants.MAX_SEQ_LENGTH, constants.DROPOUT)
+transformer = Transformer(constants.VOCAB_SIZE, constants.DIMENSIONS, constants.NUM_HEADS, constants.NUM_LAYERS, constants.D_FF, constants.MAX_SEQ_LENGTH, constants.DROPOUT).to(device)
 criterion = nn.CrossEntropyLoss(ignore_index=3) # sentencepiece pad_id = 3
 optimizer = optim.Adam(transformer.parameters(), lr=constants.LEARNING_RATE, betas=(0.9, 0.98), eps=1e-9)
 
@@ -113,7 +114,7 @@ for epoch in range(start_epoch, constants.NUM_OF_EPOCHS):
   for tgt_data in tqdm.tqdm(dl, desc=f"Epoch {epoch+1}/{constants.NUM_OF_EPOCHS}", unit="batch"):
     optimizer.zero_grad()
     output = transformer(tgt_data[:, :-1].to(device))
-    loss = criterion(output.to(device).contiguous().view(-1, constants.VOCAB_SIZE), tgt_data[:, 1:].to(device).contiguous().view(-1))
+    loss = criterion(output.contiguous().view(-1, constants.VOCAB_SIZE), tgt_data[:, 1:].to(device).contiguous().view(-1))
     loss.backward()
     optimizer.step()
     total_loss += loss.item()
