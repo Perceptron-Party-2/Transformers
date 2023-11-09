@@ -11,6 +11,7 @@ class TinyStoriesData(torch.utils.data.Dataset):
     self.dataset = load_dataset(name)
     self.sp = spm.SentencePieceProcessor(model_file='tinystorycustom.model')
     self.create_data(max_seq_length)
+    self.data = []
 
   def create_data(self, max_seq_length):
     for record in self.dataset: 
