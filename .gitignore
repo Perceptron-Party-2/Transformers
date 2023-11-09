@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 wandb/
 transformer_epoch_5.pt
+transformer_epoch_1.pt

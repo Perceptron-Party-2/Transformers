@@ -61,6 +61,9 @@ class TinyStoriesData(torch.utils.data.Dataset):
   def __getitem__(self, idx):
     return torch.tensor(self.data[idx])
 
+is_cuda = torch.cuda.is_available()
+device = "cuda:0" if is_cuda else "cpu"
+
 ds = TinyStoriesData("roneneldan/TinyStories", "train[:1%]", constants.MAX_SEQ_LENGTH)
 
 dl = torch.utils.data.DataLoader(ds, batch_size=constants.BATCH_SIZE, shuffle=True)
@@ -109,8 +112,8 @@ for epoch in range(start_epoch, constants.NUM_OF_EPOCHS):
   total_loss = 0
   for tgt_data in tqdm.tqdm(dl, desc=f"Epoch {epoch+1}/{constants.NUM_OF_EPOCHS}", unit="batch"):
     optimizer.zero_grad()
-    output = transformer(tgt_data[:, :-1])
-    loss = criterion(output.contiguous().view(-1, constants.VOCAB_SIZE), tgt_data[:, 1:].contiguous().view(-1))
+    output = transformer(tgt_data[:, :-1].to(device))
+    loss = criterion(output.to(device).contiguous().view(-1, constants.VOCAB_SIZE), tgt_data[:, 1:].to(device).contiguous().view(-1))
     loss.backward()
     optimizer.step()
     total_loss += loss.item()
