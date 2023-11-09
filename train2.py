@@ -40,9 +40,20 @@ class TinyStoriesData(torch.utils.data.Dataset):
     self.create_data(max_seq_length)
 
   def create_data(self, max_seq_length):
-    encoded = self.sp.encode(self.dataset['text'], add_bos=True, add_eos=True)
-    padded = encoded + [3] * (max_seq_length - len(encoded))
-    self.data.append(padded)
+    train_data = self.dataset
+    max = 0
+    for record in train_data: 
+      sentence = record["text"]  # Adjust the key based on the actual structure of your dataset
+      encoded =self.sp.encode_as_ids(sentence, add_bos=True, add_eos=True)
+      enc_length = len(encoded)
+      if enc_length > max:
+        max = enc_length
+      truncated = encoded[0:max_seq_length]
+      padded = truncated + [3] * (max_seq_length - len(truncated))
+      self.data.append(padded)
+    print(f"Longest encoding = {max}")
+    print(f"Length of data created: {len(self.data)}")
+    
 
   def __len__(self):
     return len(self.data)
@@ -50,7 +61,7 @@ class TinyStoriesData(torch.utils.data.Dataset):
   def __getitem__(self, idx):
     return torch.tensor(self.data[idx])
 
-ds = TinyStoriesData("roneneldan/TinyStories", "train", constants.MAX_SEQ_LENGTH)
+ds = TinyStoriesData("roneneldan/TinyStories", "train[:1%]", constants.MAX_SEQ_LENGTH)
 
 dl = torch.utils.data.DataLoader(ds, batch_size=constants.BATCH_SIZE, shuffle=True)
 
