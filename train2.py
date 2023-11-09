@@ -114,7 +114,7 @@ for epoch in range(start_epoch, constants.NUM_OF_EPOCHS):
   for tgt_data in tqdm.tqdm(dl, desc=f"Epoch {epoch+1}/{constants.NUM_OF_EPOCHS}", unit="batch"):
     optimizer.zero_grad()
     output = transformer(tgt_data[:, :-1].to(device))
-    loss = criterion(output.contiguous().view(-1, constants.VOCAB_SIZE), tgt_data[:, 1:].to(device).contiguous().view(-1))
+    loss = criterion(output.to(device).contiguous().view(-1, constants.VOCAB_SIZE), tgt_data[:, 1:].to(device).contiguous().view(-1))
     loss.backward()
     optimizer.step()
     total_loss += loss.item()
