@@ -1,7 +1,5 @@
+import sentenceCompleter
 import fastapi
-import torch
-# import tokenizer
-
 
 app = fastapi.FastAPI()
 
@@ -17,7 +15,6 @@ async def startup_event():
   # app.state.model.eval()
 
 
-
 @app.on_event("shutdown")
 async def startup_event():
   print("Shutting down")
@@ -28,19 +25,12 @@ def on_root():
   return { "message": "Hello App" }
 
 
-@app.post("/learn_to_search")
-async def learn_to_search(request: fastapi.Request):
+@app.post("/tell_me_stories")
+async def tell_me_stories(request: fastapi.Request):
 
-  # query is in text field?
-  query = (await request.json())["text"]
-
-  # query_tokens = app.state.tokenizer.encode(query)
-  # query_embeddings = app.state.tokenizer.embeddings(query_tokens)
-
-  # document_indexes = app.state.model(query_embedddings)
-
-  # return extended passage
-  result = ["Mary had a little lamb"]
-  print("query", query)
+  # text is in text field?
+  text = (await request.json())["text"]
+  result = sentenceCompleter.generate(text)
+  print("text", text)
   print("result", result)
   return result
