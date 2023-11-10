@@ -63,7 +63,6 @@ class TinyStoriesData(torch.utils.data.Dataset):
 
 is_cuda = torch.cuda.is_available()
 device = "cuda:0" if is_cuda else "cpu"
-device = "cpu"
 print(f"Device = {device}")
 
 ds = TinyStoriesData("roneneldan/TinyStories", "train[:1%]", constants.MAX_SEQ_LENGTH)
