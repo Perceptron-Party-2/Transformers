@@ -2,6 +2,9 @@ import torch
 import torch.nn as nn
 from positional_encoding import PositionalEncoding
 from decoder_layer import DecoderLayer
+import utilities
+
+device = utilities.getDevice()
 
 class Transformer(nn.Module):
     def __init__(self, tgt_vocab_size, d_model, num_heads, num_layers, d_ff, max_seq_length, dropout):
@@ -17,7 +20,7 @@ class Transformer(nn.Module):
     def generate_mask(self, tgt):
         tgt_mask = (tgt != 3).unsqueeze(1).unsqueeze(3) # sentencepiece pad_id = 3
         seq_length = tgt.size(1)
-        nopeak_mask = (1 - torch.triu(torch.ones(1, seq_length, seq_length), diagonal=1)).bool()
+        nopeak_mask = (1 - torch.triu(torch.ones(1, seq_length, seq_length), diagonal=1)).bool().to(device)
         tgt_mask = tgt_mask & nopeak_mask
         return tgt_mask
 

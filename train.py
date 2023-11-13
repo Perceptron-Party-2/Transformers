@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.utils.data as data
 from transformer import Transformer
-from datasets import load_dataset
 import dataset
 import sentencepiece as spm
 import tqdm
@@ -11,6 +10,7 @@ import constants
 import wandb
 import os
 import re
+import utilities
 
 # start a new wandb run to track this script
 if constants.WANDB_ON:
@@ -33,8 +33,7 @@ if constants.WANDB_ON:
       }
   )
 
-is_cuda = torch.cuda.is_available()
-device = "cuda:0" if is_cuda else "cpu"
+device = utilities.getDevice()
 print(f"Device = {device}")
 
 ds = dataset.TinyStoriesData("roneneldan/TinyStories", "train[:1%]", constants.MAX_SEQ_LENGTH)
