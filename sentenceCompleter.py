@@ -16,14 +16,14 @@ print(f"Device = {device}")
 def generate(text):
 
   sp = spm.SentencePieceProcessor(model_file='tinystorycustom.model')
-  encodedSentence = torch.tensor(sp.encode_as_ids(text, add_bos=True)).long().unsqueeze(0)
+  encodedSentence = torch.tensor(sp.encode_as_ids(text, add_bos=True)).long().unsqueeze(0).to(device)
   transformer = Transformer(constants.VOCAB_SIZE, constants.DIMENSIONS, constants.NUM_HEADS, constants.NUM_LAYERS, constants.D_FF, constants.MAX_SEQ_LENGTH, constants.DROPOUT).to(device)
   transformer.eval()
   utilities.load_latest_checkpoint(transformer)
   
   for _ in range(20):
     with torch.no_grad():
-      logits = transformer(encodedSentence.to(device))
+      logits = transformer(encodedSentence)
       logits = logits[:, -1, :] / 1.0
       probs = torch.nn.functional.softmax(logits, dim=-1)
       next = torch.multinomial(probs, num_samples=1)
