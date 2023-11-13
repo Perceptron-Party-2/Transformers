@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.utils.data as data
-from transformer2 import Transformer
+from transformer import Transformer
 import sentencepiece as spm
 import constants
 import os
