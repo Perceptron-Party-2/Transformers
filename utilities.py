@@ -20,7 +20,7 @@ def load_latest_checkpoint(model, path='./'):
     latest_epoch, latest_file = find_latest_epoch_file(path)
     if latest_file:
         print(f"Resuming training from epoch {latest_epoch+1}")
-        model.load_state_dict(torch.load(latest_file))
+        model.load_state_dict(torch.load(latest_file, map_location=torch.device(getDevice())))
     else:
         print("No checkpoint found, starting from beginning")
     return latest_epoch
